@@ -57,18 +57,19 @@ class PathUtilsMixin extends Mixin
   
   static function ftov($fpath)
   {
-    $path = substr($fpath, strlen(ROOT_FPATH));
+    $fpath = realpath($fpath);
+    $path = substr($fpath, strlen(W::$root_fpath));
     return $path;
   }
   
   static function vtof($vpath)
   {
-    return ROOT_FPATH.$vpath;
+    return W::$root_fpath.$vpath;
   }
   
   static function vpath($path)
   {
-    normalize_path(ROOT_VPATH,$path);
+    normalize_path(W::$root_vpath,$path);
     return $path;
   }
   
