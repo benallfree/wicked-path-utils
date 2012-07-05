@@ -26,12 +26,12 @@ class PathUtilsMixin extends Mixin
   
   static function ensure_writable_folder($path)
   {
-    $path = normalize_path($path);
+    $path = self::normalize_path($path);
     if (!file_exists($path))
     {
-      if (!mkdir($path, 0775, true)) wicked_error("Failed to mkdir on $path");
+      if (!mkdir($path, 0775, true)) W::error("Failed to mkdir on $path");
       chmod($path,0775);
-      if (!file_exists($path)) wicked_error("Failed to verify $path");
+      if (!file_exists($path)) W::error("Failed to verify $path");
     }
   }
   
@@ -69,7 +69,7 @@ class PathUtilsMixin extends Mixin
   
   static function vpath($path)
   {
-    normalize_path(W::$root_vpath,$path);
+    self::normalize_path(W::$root_vpath,$path);
     return $path;
   }
   
@@ -82,10 +82,10 @@ class PathUtilsMixin extends Mixin
   
   static function clear_cache($fpath)
   {
-    if(strstr($fpath, '/cache/')==false) wicked_error("$fpath doesn't look like a cache path.");
+    if(strstr($fpath, '/cache/')==false) W::error("$fpath doesn't look like a cache path.");
     $cmd = "rm -rf $fpath";
-    wicked_exec($cmd);
-    ensure_writable_folder($fpath);
+    W::exec($cmd);
+    self::ensure_writable_folder($fpath);
   }
 
 }
