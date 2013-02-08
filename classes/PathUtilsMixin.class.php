@@ -29,9 +29,11 @@ class PathUtilsMixin extends Mixin
     $path = self::normalize_path($path);
     if (!file_exists($path))
     {
+      W::writelock();
       if (!mkdir($path, 0775, true)) W::error("Failed to mkdir on $path");
       chmod($path,0775);
       if (!file_exists($path)) W::error("Failed to verify $path");
+      W::unlock();
     }
   }
   
@@ -57,8 +59,9 @@ class PathUtilsMixin extends Mixin
   
   static function ftov($fpath)
   {
-    $fpath = realpath($fpath);
-    $path = substr($fpath, strlen(W::$root_fpath));
+    $vpath = realpath($fpath);
+    if(!$vpath) W::error("$fpath is not a valid path for realpath()");
+    $path = substr($vpath, strlen(W::$root_fpath));
     return $path;
   }
   
@@ -84,7 +87,9 @@ class PathUtilsMixin extends Mixin
   {
     if(strstr($fpath, '/cache/')==false) W::error("$fpath doesn't look like a cache path.");
     $cmd = "rm -rf $fpath";
-    W::exec($cmd);
+    W::writelock();
+    W::cmd_or_die($cmd);
+    W::unlock();
     self::ensure_writable_folder($fpath);
   }
 
